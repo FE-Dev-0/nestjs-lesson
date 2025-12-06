@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
-import { CreateUserDto } from './dto/create-user.dto'
-import { UpdateUserDto } from './dto/update-user.dto'
+import { CreateUserDto, GetUserDto } from './dto/user.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from './user.entity'
 import { Repository } from 'typeorm'
@@ -11,11 +10,21 @@ export class UserService {
     return this.usersRepository.save(createUserDto)
   }
 
-  findAll() {
+  findAll(query: GetUserDto) {
+    const { page, limit, username, gender, role } = query
     return this.usersRepository.find({
       relations: {
         roles: true,
       },
+      where: {
+        username: username,
+        gender: gender,
+        roles: {
+          id: role,
+        },
+      },
+      take: limit,
+      skip: (page - 1) * limit,
     })
   }
 
@@ -23,9 +32,7 @@ export class UserService {
     return this.usersRepository.findOne({ where: { id } })
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    console.log(updateUserDto)
-
+  update(id: number) {
     return `This action updates a #${id} user`
   }
   async remove(id: number) {
