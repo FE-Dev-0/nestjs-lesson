@@ -1,18 +1,17 @@
 import { Global, Logger, Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { ConfigEnum } from './enum/const'
-import { User } from './modules/user/user.entity'
-import { Logs } from './modules/logs/logs.entity'
-import { Roles } from './modules/roles/entities/roles.entity'
 import { RolesModule } from './modules/roles/roles.module'
 import { AuthModule } from './auth/auth.module'
 import { LogsModule } from './modules/logs/logs.module'
 import { APP_FILTER } from '@nestjs/core'
+import { UserModule } from './modules/user/user.module'
 import { HttpExceptionFilter } from './filter/http-exception.filter'
 import * as dotenv from 'dotenv'
 import * as Joi from 'joi' // 可选：使用 Joi 进行验证
 const envFilePath = `.env.${process.env.NODE_ENV || 'development'}`
+import ormConfig from '../ormconfig'
+
 @Global()
 @Module({
   imports: [
@@ -33,20 +32,8 @@ const envFilePath = `.env.${process.env.NODE_ENV || 'development'}`
         LOG_ON: Joi.boolean().default(true),
       }),
     }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'mysql',
-        host: configService.get(ConfigEnum.DB_HOST),
-        port: configService.get(ConfigEnum.DB_PORT),
-        username: configService.get(ConfigEnum.DB_USERNAME),
-        password: configService.get(ConfigEnum.DB_PASSWORD),
-        database: configService.get(ConfigEnum.DB_DATABASE),
-        entities: [User, Logs, Roles],
-        synchronize: configService.get(ConfigEnum.DB_SYN),
-      }),
-    }),
+    TypeOrmModule.forRoot(ormConfig),
+    UserModule,
     RolesModule,
     AuthModule,
     LogsModule,
