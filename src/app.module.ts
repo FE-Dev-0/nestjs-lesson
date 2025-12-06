@@ -10,7 +10,7 @@ import { HttpExceptionFilter } from './filter/http-exception.filter'
 import * as dotenv from 'dotenv'
 import * as Joi from 'joi' // 可选：使用 Joi 进行验证
 const envFilePath = `.env.${process.env.NODE_ENV || 'development'}`
-import ormConfig from '../ormconfig'
+import { connectionParams } from '../ormconfig'
 
 @Global()
 @Module({
@@ -21,7 +21,7 @@ import ormConfig from '../ormconfig'
       load: [() => dotenv.config({ path: '.env' })],
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().valid('development', 'production').default('development'),
-        DB_HOST: Joi.string().ip(),
+        DB_HOST: Joi.alternatives().try(Joi.string().ip(), Joi.string().hostname()),
         DB_PORT: Joi.number().default(3306),
         DB_TYPE: Joi.string().valid('mysql', 'postgres'),
         DB_USERNAME: Joi.string().required(),
@@ -32,7 +32,7 @@ import ormConfig from '../ormconfig'
         LOG_ON: Joi.boolean().default(true),
       }),
     }),
-    TypeOrmModule.forRoot(ormConfig),
+    TypeOrmModule.forRoot(connectionParams),
     UserModule,
     RolesModule,
     AuthModule,
