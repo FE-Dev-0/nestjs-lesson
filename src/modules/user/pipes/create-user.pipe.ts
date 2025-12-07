@@ -1,5 +1,5 @@
-import { CreateUserDto } from '../../dto/user.dto'
-import { Roles } from './../../../roles/entities/roles.entity'
+import { Roles } from 'src/modules/roles/entities/roles.entity'
+import { CreateUserDto } from '../dto/user.dto'
 import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common'
 
 function isRole(val: any): val is Roles {

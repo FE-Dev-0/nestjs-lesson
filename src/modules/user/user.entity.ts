@@ -1,10 +1,11 @@
 import { Roles } from 'src/modules/roles/entities/roles.entity'
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, ManyToOne } from 'typeorm'
 import { Logs } from '../logs/logs.entity'
+import { Exclude } from 'class-transformer'
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  id?: number
+  id: number
 
   @Column({ unique: true })
   username: string
@@ -13,6 +14,7 @@ export class User {
   gender: number
 
   @Column()
+  @Exclude()
   password: string
 
   @ManyToMany(() => Roles, (roles) => roles.user, { cascade: true })
@@ -20,5 +22,5 @@ export class User {
   roles: Roles[]
 
   @ManyToOne(() => Logs, (logs) => logs.user)
-  logs: Logs
+  logs: Logs[]
 }

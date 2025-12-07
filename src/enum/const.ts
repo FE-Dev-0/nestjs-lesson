@@ -10,4 +10,5 @@ export enum ConfigEnum {
   LOG_ON = 'LOG_ON',
   LOG_LEVEL = 'LOG_LEVEL',
   NODE_ENV = 'NODE_ENV',
+  JWT_SECRET = 'JWT_SECRET',
 }

@@ -14,8 +14,6 @@ function getEnv(env: string): Record<string, unknown> {
 const entityDir =
   process.env.NODE_ENV === 'test' ? [__dirname + '/**/*.entity.ts'] : [__dirname + '/**/*.entity.{js,ts}']
 
-console.log(entityDir)
-
 function buildConnectionParams() {
   const defaultConfig = getEnv('.env')
   const envConfig = getEnv(`.env.${process.env.NODE_ENV || 'development'}`)

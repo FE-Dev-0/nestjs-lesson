@@ -2,7 +2,7 @@ import { NestFactory, HttpAdapterHost } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston'
 import 'winston-daily-rotate-file'
-import { TransformInterceptor } from './interceptor/transform.interceptor'
+import { TransformInterceptor } from './interceptors/transform.interceptor'
 import { AllExceptionFilter } from './filter/all-exception.filter'
 import { Logger, ValidationPipe } from '@nestjs/common'
 async function bootstrap() {

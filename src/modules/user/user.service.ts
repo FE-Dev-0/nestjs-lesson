@@ -1,16 +1,17 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
-import { GetUserDto } from './dto/user.dto'
+import { CreateUserDto, GetUserDto } from './dto/user.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from './user.entity'
 import { In, Repository } from 'typeorm'
 import { Roles } from '../roles/entities/roles.entity'
+import * as argon2d from 'argon2'
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
     @InjectRepository(Roles) private rolesRepository: Repository<Roles>,
   ) {}
-  async create(user: User) {
+  async create(user: CreateUserDto) {
     if (!user.roles) {
       const role = await this.rolesRepository.findOne({
         where: {
@@ -26,7 +27,9 @@ export class UserService {
         },
       })
     }
-    const userTmp = await this.usersRepository.create(user)
+    const userTmp = await this.usersRepository.create(user as User)
+    // 对用户密码使用argon2d加密
+    userTmp.password = await argon2d.hash(userTmp.password)
     return this.usersRepository.save(userTmp)
   }
 
@@ -52,6 +55,9 @@ export class UserService {
     return this.usersRepository.findOne({ where: { id } })
   }
 
+  find(username: string) {
+    return this.usersRepository.findOne({ where: { username } })
+  }
   async update(id: number, user: Partial<User>) {
     const userTmp = await this.usersRepository.findOne({ where: { id } })
     const newUser = this.usersRepository.merge(userTmp, user)

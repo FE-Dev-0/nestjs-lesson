@@ -1,8 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, Query, ParseIntPipe } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Logger,
+  Query,
+  ParseIntPipe,
+  UseGuards,
+} from '@nestjs/common'
 import { UserService } from './user.service'
 import { User } from './user.entity'
 import { CreateUserDto } from './dto/user.dto'
-import { CreateUserPipe } from './pipes/create-user/create-user.pipe'
+import { CreateUserPipe } from './pipes/create-user.pipe'
+import { AuthGuard } from 'src/guards/auth/auth.guard'
 
 @Controller('user')
 export class UserController {
@@ -18,6 +31,7 @@ export class UserController {
   }
 
   @Get()
+  @UseGuards(AuthGuard)
   getUsers(@Query() query: any) {
     return this.userService.findAll(query)
   }

@@ -1,5 +1,5 @@
 import { Global, Logger, Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
+import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { RolesModule } from './modules/roles/roles.module'
 import { LogsModule } from './modules/logs/logs.module'
@@ -11,6 +11,8 @@ import * as Joi from 'joi' // 可选：使用 Joi 进行验证
 const envFilePath = `.env.${process.env.NODE_ENV || 'development'}`
 import { connectionParams } from '../ormconfig'
 import { AuthModule } from './modules/auth/auth.module'
+import { JwtModule } from '@nestjs/jwt'
+import { ConfigEnum } from './enum/const'
 
 @Global()
 @Module({
@@ -30,13 +32,14 @@ import { AuthModule } from './modules/auth/auth.module'
         DB_SYN: Joi.boolean().default(false),
         LOG_LEVEL: Joi.string().valid('debug', 'info', 'warn', 'error').default('info'),
         LOG_ON: Joi.boolean().default(true),
+        JWT_SECRET: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRoot(connectionParams),
-    UserModule,
-    RolesModule,
-    LogsModule,
     AuthModule,
+    UserModule,
+    LogsModule,
+    RolesModule,
   ],
   controllers: [],
   providers: [

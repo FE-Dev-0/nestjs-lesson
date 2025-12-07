@@ -4,7 +4,7 @@ import { Roles } from 'src/modules/roles/entities/roles.entity'
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
-  @Length(6, 32)
+  @Length(3, 32)
   username: string
 
   @IsString()
@@ -13,7 +13,7 @@ export class CreateUserDto {
   password: string
 
   @IsInt()
-  gender: number
+  gender?: number
 
   roles?: number[] | Roles[]
 }
