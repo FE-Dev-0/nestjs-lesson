@@ -1,8 +1,7 @@
 import { Global, Logger, Module } from '@nestjs/common'
-import { ConfigModule, ConfigService } from '@nestjs/config'
+import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { RolesModule } from './modules/roles/roles.module'
-import { AuthModule } from './auth/auth.module'
 import { LogsModule } from './modules/logs/logs.module'
 import { APP_FILTER } from '@nestjs/core'
 import { UserModule } from './modules/user/user.module'
@@ -11,6 +10,7 @@ import * as dotenv from 'dotenv'
 import * as Joi from 'joi' // 可选：使用 Joi 进行验证
 const envFilePath = `.env.${process.env.NODE_ENV || 'development'}`
 import { connectionParams } from '../ormconfig'
+import { AuthModule } from './modules/auth/auth.module'
 
 @Global()
 @Module({
@@ -35,8 +35,8 @@ import { connectionParams } from '../ormconfig'
     TypeOrmModule.forRoot(connectionParams),
     UserModule,
     RolesModule,
-    AuthModule,
     LogsModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [

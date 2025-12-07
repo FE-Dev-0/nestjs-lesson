@@ -1,6 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, Query } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, Query, ParseIntPipe } from '@nestjs/common'
 import { UserService } from './user.service'
+import { User } from './user.entity'
 import { CreateUserDto } from './dto/user.dto'
+import { CreateUserPipe } from './pipes/create-user/create-user.pipe'
 
 @Controller('user')
 export class UserController {
@@ -10,8 +12,9 @@ export class UserController {
   ) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto)
+  addUser(@Body(CreateUserPipe) dto: CreateUserDto): any {
+    const user = dto as unknown as User
+    return this.userService.create(user)
   }
 
   @Get()
@@ -20,18 +23,18 @@ export class UserController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    this.logger.warn(`id => ${id}`)
-    return this.userService.findOne(+id)
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.findOne(id)
   }
 
   @Patch(':id')
-  update(@Param('id') id: string) {
-    return this.userService.update(+id)
+  updateUser(@Param('id') id: any, @Body() dto: any) {
+    const user = dto as User
+    return this.userService.update(id, user)
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  removeUser(@Param('id') id: string) {
     return this.userService.remove(+id)
   }
 }
